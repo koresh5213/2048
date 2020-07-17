@@ -8,14 +8,33 @@ using namespace std;
 Board::Board(unsigned short size)
 : m_size(size)
 {
-    unsigned long** rows = new unsigned long*[size];
-    for (unsigned short index=0; index < size; ++index)
+    unsigned long** rows = new unsigned long*[m_size];
+    for (unsigned short index=0; index < m_size; ++index)
     {
-        rows[index] = new unsigned long[size];
+        rows[index] = new unsigned long[m_size];
     }
     m_board = rows;
 
     ClearBoard();
+}
+
+Board::Board(const Board& other)
+: m_size(other.m_size)
+{
+    unsigned long** rows = new unsigned long*[m_size];
+    for (unsigned short index=0; index < m_size; ++index)
+    {
+        rows[index] = new unsigned long[m_size];
+    }
+    m_board = rows;
+
+    for (unsigned short index=0; index < m_size; ++index)
+    {
+        for (unsigned short jindex=0; jindex < m_size; ++jindex)
+        {
+            m_board[index][jindex] = other.m_board[index][jindex];
+        }
+    }
 }
 
 Board::~Board()
@@ -108,3 +127,4 @@ unsigned short Board::NumOfDigits(unsigned long n)const
     }
     return counter;
 }
+

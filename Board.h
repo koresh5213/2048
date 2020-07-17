@@ -5,6 +5,7 @@ class Board
 {
 public:
     Board(unsigned short size);
+    Board(const Board&);
     ~Board();
 
     unsigned long GetTile(unsigned short,unsigned short)const;
@@ -17,6 +18,7 @@ public:
 
 private:
     unsigned short NumOfDigits(unsigned long n)const;
+
     unsigned long ** m_board;
     unsigned short m_size;
 };

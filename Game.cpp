@@ -22,7 +22,7 @@ void Game::SpiceUp()
 {
     int randcol, randrow; 
 
-    if ((long)m_numTiles > (m_board.Size() * m_board.Size() -2) ) // No space for more tiles
+    if ((long)m_numTiles > (m_board.Size() * m_board.Size() -m_spiceSize) ) // No space for more tiles
     {
         m_gameOver = true;
         return;

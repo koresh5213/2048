@@ -5,7 +5,7 @@ using namespace std;
 
 StrategyRunner::StrategyRunner(Strategy* const s)
 :m_strtgy(s)
-,m_toltrance(10)
+,m_toltrance(40)
 {}
 
 bool StrategyRunner::RunSingleGame(unsigned long boardSize, unsigned long SpiceSize)
