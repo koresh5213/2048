@@ -7,8 +7,8 @@ public:
     Board(unsigned short size);
     ~Board();
 
-    unsigned short GetTile(unsigned short,unsigned short)const;
-    void SetTile(unsigned short,unsigned short,unsigned short);
+    unsigned long GetTile(unsigned short,unsigned short)const;
+    void SetTile(unsigned short,unsigned short,unsigned long);
 
     void PrintBoard()const;
     void ClearBoard();
@@ -16,7 +16,8 @@ public:
     unsigned short Size()const;
 
 private:
-    unsigned short ** m_board;
+    unsigned short NumOfDigits(unsigned long n)const;
+    unsigned long ** m_board;
     unsigned short m_size;
 };
 

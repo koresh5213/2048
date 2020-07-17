@@ -4,8 +4,9 @@
 
 using namespace std;
 
-Game::Game(unsigned short size)
+Game::Game(unsigned long size, unsigned long spice)
 : m_board(size)
+, m_spiceSize(spice)
 , m_score(0)
 , m_gameOver(false)
 , m_numTiles(0)
@@ -19,31 +20,27 @@ Game::Game(unsigned short size)
 
 void Game::SpiceUp()
 {
-    int randcol, randrow, randcol2, randrow2;
+    int randcol, randrow; 
 
-    if (m_numTiles > m_board.Size() * m_board.Size() -2 ) // No space for more tiles
+    if ((long)m_numTiles > (m_board.Size() * m_board.Size() -2) ) // No space for more tiles
     {
         m_gameOver = true;
         return;
     }
 
-    do
+    for (unsigned long index = 0; index < m_spiceSize; index++)
     {
-        randrow = rnd(seed);
-        randcol = rnd(seed);
-    } while ( m_board.GetTile(randrow, randcol) != 0 );
-    
-    m_board.SetTile(randrow, randcol, 2);
-    m_numTiles++;
+        do
+        {
+            randrow = rnd(seed);
+            randcol = rnd(seed);
+        } while ( m_board.GetTile(randrow, randcol) != 0 ); // possible bug? int to long
 
-    do
-    {
-        randrow2 = rnd(seed);
-        randcol2 = rnd(seed);
-    } while ( m_board.GetTile(randrow2, randcol2) != 0 );
+        m_board.SetTile(randrow, randcol, 2);
+        m_numTiles++;
+    }
     
-    m_board.SetTile(randrow2, randcol2, 2);
-    m_numTiles++;
+
 }
 
 void Game::BeginGame()
@@ -64,11 +61,12 @@ void Game::PrintState()const
 
 bool Game::Move(Direction d)
 {
-    unsigned short segment; // The row or col, depends on direction
-    unsigned short next, partner;
+    unsigned long segment; // The row or col, depends on direction
+    unsigned long next, partner;
+    bool moved = false;
 
     for (segment = 0 ;segment < m_board.Size() ; ++segment)
-
+    {
         for (next = GetBeginIndex(d); next < m_board.Size() && next >= 0; IncreaseIndex(d, next))
         {
             partner = next;
@@ -87,6 +85,7 @@ bool Game::Move(Direction d)
                     SetTileValue(d, partner, segment, 0);
 
                     DecreaseIndex(d,next);
+                    moved = true;
                     break;
                 }
 
@@ -97,10 +96,11 @@ bool Game::Move(Direction d)
 
                     m_numTiles--;
                     m_score += GetTileValue(d, next, segment);
+                    moved = true;
                     break;
                 }
 
-                if ( abs(next-partner) == 1) // This means two different tiles with no '0's
+                if ( ((long)next-(long)partner) * ((long)partner-(long)next) == -1) // This means two different tiles with no '0's between then
                 {
                     break;
                 }
@@ -109,14 +109,62 @@ bool Game::Move(Direction d)
                 SetTileValue(d, next, segment, GetTileValue(d, partner, segment));
                 SetTileValue(d, partner, segment, 0);
                 DecreaseIndex(d,next);
+                moved = true;
                 break;
             }
         }
-
+    }
+    if (!moved)
+    {
+        return false;
+    }
     SpiceUp();
+    return (!m_gameOver);
 }
 
-unsigned short Game::GetBeginIndex(Direction d)const
+bool Game::IsMoveLegal(Direction d)const
+{
+    unsigned long segment; // The row or col, depends on direction
+    unsigned long next, partner;
+    bool moved = false;
+
+    for (segment = 0 ;segment < m_board.Size() ; ++segment)
+    {
+        for (next = GetBeginIndex(d); next < m_board.Size() && next >= 0; IncreaseIndex(d, next))
+        {
+            partner = next;
+            IncreaseIndex(d, partner);
+
+            for (;partner < m_board.Size()  && partner >= 0; IncreaseIndex(d,partner))
+            {
+                if (GetTileValue(d, partner, segment) == 0)
+                {
+                    continue;
+                }
+
+                if (GetTileValue(d, next, segment) == 0)
+                {
+                    return true;
+                }
+
+                if (GetTileValue(d, next, segment) == GetTileValue(d, partner, segment))
+                {
+                    return true;
+                }
+
+                if ( ((long)next-(long)partner) * ((long)partner-(long)next) == -1) // This means two different tiles with no '0's between then
+                {
+                    break;
+                }
+
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+unsigned long Game::GetBeginIndex(Direction d)const
 {
     switch (d)
     {
@@ -125,9 +173,10 @@ unsigned short Game::GetBeginIndex(Direction d)const
         case DOWN: return m_board.Size() -1;
         case LEFT: return 0;
     }
+    return 0;
 }
 
-void Game::IncreaseIndex(Direction d, unsigned short &i)const
+void Game::IncreaseIndex(Direction d, unsigned long &i)const
 {
     switch (d) 
     {
@@ -138,7 +187,7 @@ void Game::IncreaseIndex(Direction d, unsigned short &i)const
     }
 }
 
-void Game::DecreaseIndex(Direction d, unsigned short &i)const
+void Game::DecreaseIndex(Direction d, unsigned long &i)const
 {
     switch (d) 
     {
@@ -149,7 +198,7 @@ void Game::DecreaseIndex(Direction d, unsigned short &i)const
     }
 }
 
-unsigned short Game::GetTileValue(Direction d, unsigned short index, unsigned short segment)const
+unsigned long Game::GetTileValue(Direction d, unsigned long index, unsigned long segment)const
 {
     switch (d)
     {
@@ -158,9 +207,10 @@ unsigned short Game::GetTileValue(Direction d, unsigned short index, unsigned sh
         case DOWN: return m_board.GetTile(index, segment);
         case LEFT: return m_board.GetTile(segment, index);
     }
+    return 0;
 }
 
-void Game::SetTileValue(Direction d, unsigned short index, unsigned short segment, unsigned short val)
+void Game::SetTileValue(Direction d, unsigned long index, unsigned long segment, unsigned long val)
 {
     switch (d)
     {
@@ -169,4 +219,19 @@ void Game::SetTileValue(Direction d, unsigned short index, unsigned short segmen
         case DOWN: m_board.SetTile(index, segment, val); break;
         case LEFT: m_board.SetTile(segment, index, val); break;
     }
+}
+
+bool Game::GameOver()const
+{
+    return m_gameOver;
+}
+
+const Board Game::BoardState()
+{
+    return m_board;
+}
+
+unsigned long Game::CurrentScore()const
+{
+    return m_score;
 }

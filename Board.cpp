@@ -1,16 +1,17 @@
 #include "Board.h"
 #include <stdexcept>
 #include <iostream>
+#include <bits/stdc++.h> 
 
 using namespace std;
 
 Board::Board(unsigned short size)
 : m_size(size)
 {
-    unsigned short** rows = new unsigned short*[size];
-    for (int index=0; index < size; ++index)
+    unsigned long** rows = new unsigned long*[size];
+    for (unsigned short index=0; index < size; ++index)
     {
-        rows[index] = new unsigned short[size];
+        rows[index] = new unsigned long[size];
     }
     m_board = rows;
 
@@ -19,14 +20,14 @@ Board::Board(unsigned short size)
 
 Board::~Board()
 {
-    for (int index=0; index < m_size; ++index)
+    for (unsigned short index=0; index < m_size; ++index)
     {
         delete[] m_board[index];
     }
     delete[] m_board;
 }
 
-unsigned short Board::GetTile(unsigned short row,unsigned short col)const
+unsigned long Board::GetTile(unsigned short row,unsigned short col)const
 {
     if (row >= m_size || col >= m_size)
     {
@@ -35,7 +36,7 @@ unsigned short Board::GetTile(unsigned short row,unsigned short col)const
     return m_board[row][col];
 }
 
-void Board::SetTile(unsigned short row, unsigned short col ,unsigned short newVal)
+void Board::SetTile(unsigned short row, unsigned short col ,unsigned long newVal)
 {
     if (row >= m_size || col >= m_size)
     {
@@ -46,11 +47,36 @@ void Board::SetTile(unsigned short row, unsigned short col ,unsigned short newVa
 
 void Board::PrintBoard()const
 {
-    for (int index=0; index < m_size; ++index)
+    unsigned long max = 0;
+    unsigned long spaces=0;
+    unsigned long curSpaces=0;
+
+    for (unsigned short index=0; index < m_size; ++index)
     {
-        for (int jindex=0; jindex < m_size; ++jindex)
+        for (unsigned short jindex=0; jindex < m_size; ++jindex)
         {
-            cout << m_board[index][jindex] << "|" ;
+            if (max < m_board[index][jindex])
+            {
+                max = m_board[index][jindex];
+            }
+        }
+    }
+
+    spaces = NumOfDigits(max);  
+
+    for (unsigned short index=0; index < m_size; ++index)
+    {
+        for (unsigned short jindex=0; jindex < m_size; ++jindex)
+        {
+            cout << m_board[index][jindex];
+
+            curSpaces = spaces - NumOfDigits(m_board[index][jindex]); 
+
+                for (unsigned long kindex=0; kindex < curSpaces; kindex++)
+                {
+                    cout << " ";
+                }
+            cout << "|" ;
         }
         cout << endl;
     }
@@ -58,9 +84,9 @@ void Board::PrintBoard()const
 
 void Board::ClearBoard()
 {
-    for (int index=0; index < m_size; ++index)
+    for (unsigned short index=0; index < m_size; ++index)
     {
-        for (int jindex=0; jindex < m_size; ++jindex)
+        for (unsigned short jindex=0; jindex < m_size; ++jindex)
         {
             m_board[index][jindex] = 0;
         }
@@ -70,4 +96,15 @@ void Board::ClearBoard()
 unsigned short Board::Size()const
 {
     return m_size;
+}
+
+unsigned short Board::NumOfDigits(unsigned long n)const
+{
+    unsigned long counter = 1;
+    while (n > 10)
+    {
+        counter++;
+        n = n/10;
+    }
+    return counter;
 }

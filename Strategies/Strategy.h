@@ -1,7 +1,7 @@
 #ifndef _STRATEGY_H
 #define _STRATEGY_H
 
-#include "Game.h"
+#include "../Game.h"
 
 class Strategy
 {

@@ -5,7 +5,7 @@ using namespace std;
 
 int main()
 {
-    unsigned short ans;
+    unsigned long ans;
     char ansc = 'n';
     cout << "Game size?" << endl;
     cin >> ans;
