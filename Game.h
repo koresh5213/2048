@@ -21,25 +21,32 @@ public:
 
     void PrintState()const;
     void BeginGame();
-    const Board BoardState();
+    const Board BoardState()const;
 
 private:
+    void CheckForGameOver();
+    void AddRandomTile();
+    // Spice up is the process of adding random numbers 
     void SpiceUp(); 
+
+private:
     unsigned long GetBeginIndex(Direction d)const;
     void IncreaseIndex(Direction d, unsigned long &i)const;
     void DecreaseIndex(Direction d, unsigned long &i)const;
     unsigned long GetTileValue(Direction d, unsigned long index, unsigned long segment)const;
     void SetTileValue(Direction d, unsigned long index, unsigned long segment, unsigned long val);
 
+private:
     Board m_board; 
     unsigned long m_spiceSize;
-
     unsigned long m_score;
     bool m_gameOver;
     unsigned int m_numTiles;
 
-    std::mt19937 seed;
-    std::uniform_int_distribution<> rnd;
+private:
+    std::mt19937 m_seed;
+    std::uniform_int_distribution<> m_rnd;
+    std::uniform_int_distribution<> m_precetntage;
 };
 
 #endif

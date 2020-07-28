@@ -9,10 +9,6 @@ int main()
     Strategy* str = new RandomStrategy();
     StrategyRunner sr(str);
 
-    sr.RunSingleGame(4,1);
-    sr.RunSingleGame(4,1);
-    sr.RunSingleGame(4,1);
-    sr.RunSingleGame(4,1);
-    sr.RunSingleGame(4,1);
+    sr.RunPlan(6,3,10000);
     cout << sr.GetAnalyze();
 }

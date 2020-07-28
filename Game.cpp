@@ -12,35 +12,52 @@ Game::Game(unsigned long size, unsigned long spice)
 , m_numTiles(0)
 {
     std::random_device rd;  //Will be used to obtain a seed for the random number engine
-    seed = std::mt19937 (rd()); //Standard mersenne_twister_engine seeded with rd()
-    rnd = std::uniform_int_distribution<> (0, size-1);
+    m_seed = std::mt19937 (rd()); //Standard mersenne_twister_engine seeded with rd()
+    m_rnd = std::uniform_int_distribution<> (0, size-1);
+    m_precetntage = std::uniform_int_distribution<> (0, 99);
 
     BeginGame();
 }
 
-void Game::SpiceUp()
+void Game::AddRandomTile()
 {
     int randcol, randrow; 
+    int four;
 
-    if ((long)m_numTiles > (m_board.Size() * m_board.Size() -m_spiceSize) ) // No space for more tiles
+    do
     {
-        m_gameOver = true;
-        return;
-    }
+        randrow = m_rnd(m_seed);
+        randcol = m_rnd(m_seed);
+    } while ( m_board.GetTile(randrow, randcol) != 0 ); // possible bug? int to long
 
-    for (unsigned long index = 0; index < m_spiceSize; index++)
+    four = m_precetntage(m_seed);
+
+    if (four > 9)
     {
-        do
-        {
-            randrow = rnd(seed);
-            randcol = rnd(seed);
-        } while ( m_board.GetTile(randrow, randcol) != 0 ); // possible bug? int to long
-
         m_board.SetTile(randrow, randcol, 2);
-        m_numTiles++;
+    }
+    else
+    {
+        m_board.SetTile(randrow, randcol, 4);
     }
     
+    m_numTiles++;
+}
 
+void Game::CheckForGameOver()
+{
+    if (!IsMoveLegal(UP) && !IsMoveLegal(DOWN) && !IsMoveLegal(LEFT) && !IsMoveLegal(RIGHT))
+    {
+        m_gameOver = true;
+    }
+}
+
+void Game::SpiceUp()
+{
+    for (unsigned long i=0; i<m_spiceSize && (m_numTiles != m_board.Size() * m_board.Size()) ; ++i)
+    {
+        AddRandomTile();
+    }
 }
 
 void Game::BeginGame()
@@ -49,7 +66,11 @@ void Game::BeginGame()
     m_numTiles = 0;
     m_score = 0;
     m_gameOver = false;
-    SpiceUp();
+    AddRandomTile();
+    for (unsigned long index = 0; index < m_board.Size()  / 2; ++index)
+    {
+        AddRandomTile();
+    }
 }
 
 void Game::PrintState()const
@@ -119,6 +140,7 @@ bool Game::Move(Direction d)
         return false;
     }
     SpiceUp();
+    CheckForGameOver();
     return (!m_gameOver);
 }
 
@@ -126,7 +148,6 @@ bool Game::IsMoveLegal(Direction d)const
 {
     unsigned long segment; // The row or col, depends on direction
     unsigned long next, partner;
-    bool moved = false;
 
     for (segment = 0 ;segment < m_board.Size() ; ++segment)
     {
@@ -226,7 +247,7 @@ bool Game::GameOver()const
     return m_gameOver;
 }
 
-const Board Game::BoardState()
+const Board Game::BoardState()const
 {
     return m_board;
 }

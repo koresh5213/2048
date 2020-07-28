@@ -12,6 +12,7 @@ bool StrategyRunner::RunSingleGame(unsigned long boardSize, unsigned long SpiceS
 {
     Direction d;
     Game g(boardSize, SpiceSize);
+    // Tolrance: how many repeated tries to get valid move before declaring failed game?
     unsigned long tol;
 
     while (!g.GameOver())
@@ -25,6 +26,8 @@ bool StrategyRunner::RunSingleGame(unsigned long boardSize, unsigned long SpiceS
                 return false;
             }
 
+            if (g.GameOver()) break;
+
             d = m_strtgy->GetMove(g.BoardState());
 
             if (!g.Move(d))
@@ -32,7 +35,10 @@ bool StrategyRunner::RunSingleGame(unsigned long boardSize, unsigned long SpiceS
                 tol--;
                 continue;
             }
-            else break;
+            else 
+            {
+                break;
+            }
         }
     }
 
@@ -43,4 +49,12 @@ bool StrategyRunner::RunSingleGame(unsigned long boardSize, unsigned long SpiceS
 string StrategyRunner::GetAnalyze()const
 {
     return m_analysis.GetAnalysis();
+}
+
+void StrategyRunner::RunPlan(unsigned long size, unsigned long spice, unsigned long amount)
+{
+    for (unsigned long index = 0; index<amount; ++index)
+    {
+        RunSingleGame(size, spice);
+    }
 }

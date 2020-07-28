@@ -20,7 +20,6 @@ Direction RandomStrategy::GetMove(const Board b)
         return DOWN;
     case 2:
         return LEFT;
-    case 3:
-        return RIGHT;
     }
+    return RIGHT;
 }

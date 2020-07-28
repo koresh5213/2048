@@ -20,7 +20,10 @@ void GameAnalysis::AddGame(unsigned long score, bool failed)
         ++m_failedGames;
     }
 
-    m_avScore = (m_avScore + (double)score) / (double)m_numberOfGames;
+    //m_avScore = (m_avScore + (double)score) / (double)m_numberOfGames;
+    m_avScore *= (m_numberOfGames - 1);
+    m_avScore += score;
+    m_avScore /= m_numberOfGames;
 
     if (score > m_bestScore)
     {
@@ -53,15 +56,25 @@ string GameAnalysis::ToString()const
 {
     string ans = "Board size: ";
     ans.append(to_string(m_boardSize));
-    ans.append(" Spice size: ");
+    ans.append("\n");
+
+    ans.append("Spice size: ");
     ans.append(to_string(m_spiceSize));
-    ans.append(" Number of games: ");
+    ans.append("\n");
+
+    ans.append("Number of games: ");
     ans.append(to_string(m_numberOfGames));
-    ans.append(" Falled: ");
+    ans.append("\n");
+
+    ans.append("Falled: ");
     ans.append(to_string(m_failedGames));
-    ans.append(" Avarage score: ");
+    ans.append("\n");
+
+    ans.append("Avarage score: ");
     ans.append(to_string(m_avScore));
-    ans.append(" Best score: ");
+    ans.append("\n");
+
+    ans.append("Best score: ");
     ans.append(to_string(m_bestScore));
 
     return ans;

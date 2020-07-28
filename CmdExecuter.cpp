@@ -39,7 +39,7 @@ int main()
         if (moved)
         {
             g.PrintState();
-            cout << "======" << endl << "use WASD, R for restart" << endl;
+            cout << "======" << endl << "use WASD, R for restart, Q to quit" << endl;
         }
         else
         {

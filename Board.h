@@ -1,6 +1,8 @@
 #ifndef BOARD_H
 #define BOARD_H
 
+
+// Class board- nXn board filled with 'unsigned long'
 class Board
 {
 public:

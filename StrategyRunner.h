@@ -8,15 +8,15 @@ class StrategyRunner
 {
 public:
 StrategyRunner(Strategy* const);
-std::string RunPlan(std::string path);
+void RunPlan(unsigned long, unsigned long, unsigned long);
 std::string GetAnalyze()const;
-bool RunSingleGame(unsigned long, unsigned long);
 
 private:
-
+bool RunSingleGame(unsigned long, unsigned long);
 
 Strategy *const m_strtgy;
 AnalysisCollector m_analysis;
+// Tolrance: how many repeated tries to get valid move before declaring failed game?
 unsigned long m_toltrance;
 
 };
